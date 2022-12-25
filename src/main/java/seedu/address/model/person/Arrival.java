@@ -2,6 +2,7 @@ package seedu.address.model.person;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 
 import static java.util.Objects.requireNonNull;
@@ -51,6 +52,9 @@ public class Arrival {
         return test.matches(VALIDATION_REGEX);
     }
 
+    public LocalDate getValue(){
+        return value;
+    }
 
     @Override
     public String toString() {

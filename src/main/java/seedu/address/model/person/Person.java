@@ -2,10 +2,9 @@ package seedu.address.model.person;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.*;
 
 import seedu.address.model.tag.Tag;
 
@@ -88,6 +87,16 @@ public class Person {
 
         return otherPerson != null
                 && otherPerson.getName().equals(getName());
+    }
+
+
+    // adapted from https://stackoverflow.com/questions/494180/how-do-i-check-if-a-date-is-within-a-certain-range
+    // checks if the date is between arrival and endDate
+    public boolean isWithinRange(LocalDate totalDate) {
+        LocalDate startDate = getArrival().getValue().minus(Period.ofDays(1));
+        LocalDate endDate = getArrival().getValue().plusDays(getRepairDuration().value + 1);
+
+        return (totalDate.isAfter(startDate) && totalDate.isBefore(endDate));
     }
 
     /**
