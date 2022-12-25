@@ -2,10 +2,9 @@ package seedu.address.model.person;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.*;
 
 import seedu.address.model.tag.Tag;
 
@@ -19,6 +18,9 @@ public class Person {
     private final Name name;
     private final Phone phone;
     private final Email email;
+    private final Plate plate;
+    private final Arrival arrival;
+    private final RepairDuration repairDuration;
 
     // Data fields
     private final Address address;
@@ -27,12 +29,15 @@ public class Person {
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, tags);
+    public Person(Name name, Phone phone, Email email, Address address, Plate plate, Arrival arrival, RepairDuration repairDuration, Set<Tag> tags) {
+        requireAllNonNull(name, phone, email, address, plate, arrival, repairDuration, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.address = address;
+        this.plate = plate;
+        this.arrival = arrival;
+        this.repairDuration = repairDuration;
         this.tags.addAll(tags);
     }
 
@@ -52,6 +57,17 @@ public class Person {
         return address;
     }
 
+    public Plate getPlate(){
+        return plate;
+    }
+
+    public Arrival getArrival(){
+        return arrival;
+    }
+
+    public RepairDuration getRepairDuration(){
+        return repairDuration;
+    }
     /**
      * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
      * if modification is attempted.
@@ -73,6 +89,16 @@ public class Person {
                 && otherPerson.getName().equals(getName());
     }
 
+
+    // adapted from https://stackoverflow.com/questions/494180/how-do-i-check-if-a-date-is-within-a-certain-range
+    // checks if the date is between arrival and endDate
+    public boolean isWithinRange(LocalDate totalDate) {
+        LocalDate startDate = getArrival().getValue().minus(Period.ofDays(1));
+        LocalDate endDate = getArrival().getValue().plusDays(getRepairDuration().value + 1);
+
+        return (totalDate.isAfter(startDate) && totalDate.isBefore(endDate));
+    }
+
     /**
      * Returns true if both persons have the same identity and data fields.
      * This defines a stronger notion of equality between two persons.
@@ -92,13 +118,16 @@ public class Person {
                 && otherPerson.getPhone().equals(getPhone())
                 && otherPerson.getEmail().equals(getEmail())
                 && otherPerson.getAddress().equals(getAddress())
+                && otherPerson.getPlate().equals(getPlate())
+                && otherPerson.getArrival().equals(getArrival())
+                && otherPerson.getRepairDuration().equals(getRepairDuration())
                 && otherPerson.getTags().equals(getTags());
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags);
+        return Objects.hash(name, phone, email, address, plate, arrival, repairDuration, tags);
     }
 
     @Override
@@ -110,7 +139,13 @@ public class Person {
                 .append("; Email: ")
                 .append(getEmail())
                 .append("; Address: ")
-                .append(getAddress());
+                .append(getAddress())
+                .append("; Plate: ")
+                .append(getPlate())
+                .append("; Arrival: ")
+                .append(getArrival())
+                .append("; RepairDuration: ")
+                .append(getRepairDuration());
 
         Set<Tag> tags = getTags();
         if (!tags.isEmpty()) {
